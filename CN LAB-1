@@ -98,3 +98,50 @@ A: 4
 B: 3
 C: 2
 D: 0
+
+Input: 
+4
+5
+A B 12
+B C 1
+C D 2
+D A 4
+A C 9
+A
+
+Output
+Shortest distances from vertex A:
+A: 0
+B: 7
+C: 6
+D: 4
+
+Input: 
+4
+5
+A B 12
+B C 1
+C D 2
+D A 4
+A C 9
+B
+Shortest distances from vertex B:
+A: 7
+B: 0
+C: 1
+D: 3
+
+Input: 
+4
+5
+A B 12
+B C 1
+C D 2
+D A 4
+A C 9
+C
+Shortest distances from vertex C:
+A: 6
+B: 1
+C: 0
+D: 2
