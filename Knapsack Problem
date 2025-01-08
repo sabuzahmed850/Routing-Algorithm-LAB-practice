@@ -1,0 +1,46 @@
+#include <bits/stdc++.h>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    int n, mx;
+    cin >> n;
+    cin >> mx;
+
+    vector<int> weights(n), profits(n);
+    vector<double> profitPerWeight(n);
+    for (int i = 0; i < n; i++) {
+        cin >> weights[i];
+    }
+    for (int i = 0; i < n; i++) {
+        cin >> profits[i];
+        profitPerWeight[i] = static_cast<double>(profits[i]) / weights[i];
+    }
+
+    // Sorting items by profit/weight ratio in descending order
+    vector<int> indices(n);
+    iota(indices.begin(), indices.end(), 0); // Fill indices with 0, 1, ..., n-1
+    sort(indices.begin(), indices.end(), [&](int a, int b) {
+        return profitPerWeight[a] > profitPerWeight[b];
+    });
+
+    // Compute maximum profit
+    double maxProfit = 0;
+    for (int i = 0; i < n; i++) {
+        int idx = indices[i];
+        if (mx >= weights[idx]) {
+            maxProfit += profits[idx];
+            mx -= weights[idx];
+        } else {
+            maxProfit += mx * profitPerWeight[idx];
+            break;
+        }
+    }
+
+    // Output: Maximum profit
+    cout << "Maximum Profit is: " << maxProfit << endl;
+
+    return 0;
+}
+
