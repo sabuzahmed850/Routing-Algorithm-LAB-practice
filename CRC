@@ -1,0 +1,105 @@
+#include <stdio.h>
+#include <string.h>
+
+int gen[10], genl, rem[10];
+
+// Function to calculate the remainder using the generator polynomial
+void remainder(int fr[], int tlen) {
+    int i, j;
+
+    // Iterate over each bit of the frame
+    for (i = 0; i <= tlen - genl; i++) {
+        if (fr[i] == 1) { // Only proceed if the bit is 1
+            for (j = 0; j < genl; j++) {
+                fr[i + j] ^= gen[j]; // Perform XOR with the generator
+            }
+        }
+    }
+
+    // Extract the remainder (last genl-1 bits)
+    for (i = 0; i < genl - 1; i++) {
+        rem[i] = fr[tlen - genl + 1 + i];
+    }
+}
+
+int main() {
+    int fr[20], dupfr[20], recfr[20];
+    int frl, tlen, flag;
+
+    // Input frame length and frame
+    printf("Enter frame length: ");
+    scanf("%d", &frl);
+    printf("Enter the frame (binary): ");
+    for (int i = 0; i < frl; i++) {
+        scanf("%d", &fr[i]);
+    }
+
+    // Input generator length and generator polynomial
+    printf("Enter generator length: ");
+    scanf("%d", &genl);
+    printf("Enter the generator (binary): ");
+    for (int i = 0; i < genl; i++) {
+        scanf("%d", &gen[i]);
+    }
+
+    // Initialize the transmitted frame with extra zeros for CRC bits
+    tlen = frl + genl - 1;
+    for (int i = 0; i < frl; i++) {
+        dupfr[i] = fr[i];
+    }
+    for (int i = frl; i < tlen; i++) {
+        dupfr[i] = 0; // Append zeros for CRC computation
+    }
+
+    // Compute the remainder for the transmitted frame
+    remainder(dupfr, tlen);
+
+    // Append the computed CRC bits to the frame
+    for (int i = frl, j = 0; j < genl - 1; i++, j++) {
+        dupfr[i] = rem[j];
+    }
+
+    // Print the transmitted frame
+    printf("Transmitted frame: ");
+    for (int i = 0; i < tlen; i++) {
+        printf("%d", dupfr[i]);
+    }
+    printf("\n");
+
+    // Input the received frame
+    printf("Enter received frame: ");
+    for (int i = 0; i < tlen; i++) {
+        scanf("%d", &recfr[i]);
+    }
+
+    // Compute the remainder for the received frame
+    remainder(recfr, tlen);
+
+    // Check if the remainder is zero
+    flag = 0;
+    for (int i = 0; i < genl - 1; i++) {
+        if (rem[i] != 0) {
+            flag = 1; // Non-zero remainder indicates an error
+            break;
+        }
+    }
+
+    if (flag == 0) {
+        printf("Frame received correctly.\n");
+    } else {
+        printf("Error detected in received frame.\n");
+    }
+
+    return 0;
+}
+/*
+Enter frame length: 8
+Enter the frame (binary): 1 0 1 1 0 0 1 1
+Enter generator length: 4
+Enter the generator (binary): 1 0 0 1
+Transmitted frame: 10110011010
+Enter received frame: 10110011010
+output:
+Frame received correctly.
+
+*/
